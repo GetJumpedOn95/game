@@ -11,10 +11,10 @@ class Background : RenderableEntity {
     var rectangle : Rectangle
     var rect : Rect
     var rectangles = [Rectangle]()
-//    let horizontal = 10
-//    let vertical = 5
-    let per_width = 200
-    let per_height = 200
+    let horizontal = 10
+    let vertical = 7
+    var per_width = 200
+    var per_height = 200
     let startX = 0
     let startY = 0 
     let fillStyle = FillStyle(color:Color(.brown))
@@ -26,16 +26,18 @@ class Background : RenderableEntity {
     var colors = [FillStyle]()
     var didDraw = false
    
-    init() {
+        init() {
         rect = Rect(topLeft:Point(x:startX, y:startY), size:Size(width:per_width,height:per_height))
         rectangle = Rectangle(rect:rect, fillMode:.fillAndStroke)
-     //   super.init(name:"Background")
-   // }
+        super.init(name:"Background")
+    }
 
-   // override func render(canvas:Canvas) {
-   // if let canvasSize = canvas.canvasSize,
-      
-      if !didDraw {
+    override func render(canvas:Canvas) {
+        if let canvasSize = canvas.canvasSize, !didDraw {
+
+            //Calc vertical and horizontal size
+            per_width = canvasSize.width/horizontal
+            per_height = canvasSize.height/vertical
       
         //start
         var x_axis = startX
@@ -43,7 +45,7 @@ class Background : RenderableEntity {
             var j = 0
             //Draw left vertical side
             repeat {
-              
+                //
                 rect = Rect(topLeft:Point(x:x_axis, y:y_axis), size:Size(width:per_width,height:per_height))
                 rectangle = Rectangle(rect:rect, fillMode:.fillAndStroke)
                 rectangles.append(rectangle)
@@ -51,8 +53,10 @@ class Background : RenderableEntity {
                 
                 j = j + 1
                 y_axis = y_axis + per_height
-            } while j < vertical 
-
+            } while j < vertical
+            //move back on on the y axis so bottom row appears on screen
+            y_axis = y_axis - per_height
+            
             j = 0   
             //Draw bottom
             repeat {
@@ -63,13 +67,39 @@ class Background : RenderableEntity {
                 j = j + 1
                 x_axis = x_axis + per_width
             } while j < horizontal
+            //move back one for y axis
+            x_axis = x_axis - per_width
 
-            didDraw = true
-      }
-      super.init(name:"Background")
-    }
+            //draw right
+            j = 0
+            repeat {
+                rect = Rect(topLeft:Point(x:x_axis, y:y_axis), size:Size(width:per_width,height:per_height))
+                rectangle = Rectangle(rect:rect, fillMode:.fillAndStroke)
+                rectangles.append(rectangle)
+                print("adding x_axis = \(x_axis) y = \(y_axis)")
+                j = j + 1
+                y_axis = y_axis - per_height
+            } while j < vertical
+            //move back on on the y axis so bottom row appears on screen
+             y_axis = y_axis + per_height  
+            
+            //draw top
+            j = 0
+            repeat {
+                rect = Rect(topLeft:Point(x:x_axis, y:y_axis), size:Size(width:per_width,height:per_height))
+                rectangle = Rectangle(rect:rect, fillMode:.fillAndStroke)
+                rectangles.append(rectangle)
+                print("adding x_axis = \(x_axis) y = \(y_axis)")
+                j = j + 1
+                x_axis = x_axis - per_width
+            } while j < horizontal        
+
+ //           didDraw = true
+//      }
+//      super.init(name:"Background")
+ //   }
     
-    override func setup(canvasSize:Size, canvas:Canvas) {
+ //   override func setup(canvasSize:Size, canvas:Canvas) {
 
         colors.append(fillStyle)
         colors.append(fillStyle2)
@@ -85,5 +115,7 @@ class Background : RenderableEntity {
             num = num + 1
         }
         canvas.render(outline)
+        didDraw = true
+        }
 }
 }
